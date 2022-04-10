@@ -5,4 +5,5 @@ import java.util.List;
 
 public interface BookingService {
     List<Long> getExpiredBookings(LocalDate bookingDate);
+    List<Booking> getAllBookings();
 }

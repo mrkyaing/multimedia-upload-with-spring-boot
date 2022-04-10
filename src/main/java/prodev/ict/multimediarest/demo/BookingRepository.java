@@ -11,7 +11,7 @@ import java.util.List;
 
 @Repository
 public interface BookingRepository extends JpaRepository< Booking, Long > {
-   @Query("SELECT b.id FROM Booking b where b.status='PENDING' AND b.bookingDate<=:queryDate")
+   @Query(value = "SELECT b.id FROM Booking b where b.status='PENDING' AND b.booking_Date<=:queryDate and b.booking_Time='23:59'",nativeQuery = true)
    List<Long> getExpiredBookings(LocalDate queryDate);
 
     @Transactional

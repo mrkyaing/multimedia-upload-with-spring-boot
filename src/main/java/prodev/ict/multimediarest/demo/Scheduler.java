@@ -1,10 +1,8 @@
 package prodev.ict.multimediarest.demo;
 
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -17,12 +15,11 @@ public class Scheduler {
         this.bookingService = bookingService;
         this.bookingRepository = bookingRepository;
     }
-
-    @Scheduled(cron = "0/5 * * * * *")//every 5 seconds
+    @Scheduled(cron = "59 0 0 * * *")//every 5 seconds
     public void deleteOverDueDateBooking() {
-        LocalDate  now=LocalDate.now();
+        LocalDateTime now=LocalDateTime.now();
         System.out.println("Java cron job expression:: " + now);
-        List<Long> bookings=bookingService.getExpiredBookings(now);
+        List<Long> bookings=bookingService.getExpiredBookings(now.toLocalDate());
         for(Long bookingId:bookings)
         {
             System.out.println(bookingId);
