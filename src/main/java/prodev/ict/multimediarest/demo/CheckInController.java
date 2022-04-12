@@ -8,23 +8,32 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-public class BookingController {
+public class CheckInController {
 @Autowired
-private  BookingService bookingService;
+CheckInService checkInService;
 
-    @GetMapping(value = "/exportCSV", produces = "text/csv")
-    public ResponseEntity<Resource> exportCSV() {
-        String[] csvHeader = {"Id", "bookingDate", "bookingTime","status"};
-        List<Booking> csvBody =bookingService.getAllBookings();
+@GetMapping(value = "/exportCheckInCSV", produces = "text/csv")
+    public ResponseEntity<Resource> exportCSV(@RequestParam("from") Optional<LocalDate> from,
+                                              @RequestParam("to") Optional<LocalDate> to) {
+        String[] csvHeader = {"Id", "mobileUserId", "locationId","description"};
+    List<CheckIn> csvBody=null;
+        if (from.isPresent() && to.isPresent())
+            csvBody=checkInService.findAllByCreatedDateBetween(from.get(),to.get());
+        else
+            csvBody=checkInService.getAllCheckIn();
         ByteArrayInputStream byteArrayOutputStream;
 
         try (
@@ -37,8 +46,8 @@ private  BookingService bookingService;
                 );
         ) {
             // populating the CSV content
-            for (Booking b : csvBody)
-                csvPrinter.printRecord(b.getId(),""+b.getBookingDate(),""+b.getBookingTime(),""+b.getStatus());
+            for (CheckIn b : csvBody)
+                csvPrinter.printRecord(b.getId(),""+b.getMobileUserId(),""+b.getLocationId(),""+b.getDescription());
             // writing the underlying stream
             csvPrinter.flush();
             byteArrayOutputStream = new ByteArrayInputStream(out.toByteArray());
@@ -46,7 +55,7 @@ private  BookingService bookingService;
             throw new RuntimeException(e.getMessage());
         }
         InputStreamResource fileInputStream = new InputStreamResource(byteArrayOutputStream);
-        String csvFileName = "booking.csv";
+        String csvFileName = "check.csv";
         // setting HTTP headers
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + csvFileName);
