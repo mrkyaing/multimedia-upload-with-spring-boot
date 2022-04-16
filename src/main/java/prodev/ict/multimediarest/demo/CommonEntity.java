@@ -30,4 +30,6 @@ public abstract class CommonEntity {
 
     @UpdateTimestamp
     private LocalDateTime updatedDate;
+
+    private String auditAction;
 }

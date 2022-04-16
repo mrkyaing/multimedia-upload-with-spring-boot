@@ -14,6 +14,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -23,6 +25,11 @@ private  BookingService bookingService;
 
     @GetMapping(value = "/exportCSV", produces = "text/csv")
     public ResponseEntity<Resource> exportCSV() {
+        Booking entity=new Booking();
+        entity.setBookingDate(LocalDate.now());
+        entity.setBookingTime(LocalTime.now());
+        entity.setStatus(STATUS.PENDING);
+        bookingService.createBookin(entity);
         String[] csvHeader = {"Id", "bookingDate", "bookingTime","status"};
         List<Booking> csvBody =bookingService.getAllBookings();
         ByteArrayInputStream byteArrayOutputStream;

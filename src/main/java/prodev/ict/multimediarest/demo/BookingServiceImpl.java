@@ -21,4 +21,15 @@ public class BookingServiceImpl implements BookingService{
     public List<Booking> getAllBookings() {
         return bookingRepository.findAll();
     }
+
+    @Override
+    public boolean createBookin(Booking entity) {
+       try {
+           bookingRepository.save(entity);
+           return  true;
+       }
+       catch (Exception e){
+           return  false;
+       }
+    }
 }
